@@ -1,91 +1,128 @@
 <template>
-    <v-container>
-        <v-row align="start">
-            <v-col cols="12">
-                <v-card :loading="loading" max-width="374" elevation="5">
-                    <template slot="progress">
-                        <v-progress-linear
-                            color="deep-purple"
-                            height="10"
-                            indeterminate
-                        ></v-progress-linear>
-                    </template>
+  <v-container>
+    <v-row align="start">
+      <v-col cols="12">
+        <template>
+          <v-card class="mx-auto" max-width="400">
+            <v-list>
+              <v-list-item two-line>
+                <v-list-item-content>
+                  <v-list-item-title class="headline">
+                    San Francisco
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    >Mon, 12:30 PM, Mostly sunny</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+                <v-list-item-content> </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-btn fab small text @click="getLocation">
+                  <v-icon>
+                    mdi-crosshairs-gps
+                  </v-icon>
+                </v-btn>
+              </v-list-item>
+            </v-list>
 
-                    <v-img
-                        height="250"
-                        src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                    ></v-img>
+            <v-divider></v-divider>
 
-                    <v-card-title>{{ msg }}</v-card-title>
+            <v-card-text>
+              <v-row align="center">
+                <v-col class="display-3" cols="6">
+                  23&deg;C
+                </v-col>
+                <v-col cols="6">
+                  <v-img
+                    src="https://cdn.vuetifyjs.com/images/cards/sun.png"
+                    alt="Sunny image"
+                    width="150"
+                  ></v-img>
+                </v-col>
+              </v-row>
+            </v-card-text>
 
-                    <v-card-text>
-                        <v-row align="center" class="mx-0">
-                            <v-rating
-                                :value="4.5"
-                                color="amber"
-                                dense
-                                half-increments
-                                readonly
-                                size="14"
-                            ></v-rating>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-send</v-icon>
+              </v-list-item-icon>
+              <v-list-item-subtitle>23 km/h</v-list-item-subtitle>
+            </v-list-item>
 
-                            <div class="grey--text ml-4">
-                                4.5 (413)
-                            </div>
-                        </v-row>
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-cloud-download</v-icon>
+              </v-list-item-icon>
+              <v-list-item-subtitle>48%</v-list-item-subtitle>
+            </v-list-item>
 
-                        <div class="my-4 subtitle-1">
-                            $ • Italian, Cafe
-                        </div>
+            <v-divider></v-divider>
 
-                        <div>
-                            Small plates, salads & sandwiches - an intimate
-                            setting with 12 indoor seats plus patio seating.
-                        </div>
-                    </v-card-text>
+            <v-list class="transparent">
+              <v-list-item v-for="item in forecast" :key="item.day">
+                <v-list-item-title>{{ item.day }}</v-list-item-title>
 
-                    <v-divider class="mx-4"></v-divider>
+                <v-list-item-icon>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-icon>
 
-                    <v-card-title>Tonight's availability</v-card-title>
+                <v-list-item-subtitle class="text-right">
+                  {{ item.temp }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
 
-                    <v-card-text>
-                        <v-chip-group
-                            v-model="selection"
-                            active-class="deep-purple accent-4 white--text"
-                            column
-                        >
-                            <v-chip>5:30PM</v-chip>
+            <v-divider></v-divider>
 
-                            <v-chip>7:30PM</v-chip>
-
-                            <v-chip>8:00PM</v-chip>
-
-                            <v-chip>9:00PM</v-chip>
-                        </v-chip-group>
-                    </v-card-text>
-
-                    <v-card-actions>
-                        <v-btn
-                            color="deep-purple lighten-2"
-                            text
-                            @click="reserve"
-                        >
-                            Reserve
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-col>
-
-            <v-col class="mb-5" cols="12"> </v-col>
-        </v-row>
-    </v-container>
+            <v-card-actions>
+              <v-btn text>
+                Full Report
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 export default {
-    name: 'Card',
-    props: {
-        msg: String,
+  name: 'Card',
+  props: {
+    msg: String,
+  },
+  data() {
+    return {
+      labels: ['SU', 'MO', 'TU', 'WED', 'TH', 'FR', 'SA'],
+      time: 0,
+      forecast: [
+        {
+          day: 'Tuesday',
+          icon: 'mdi-white-balance-sunny',
+          temp: '24\xB0/12\xB0',
+        },
+        {
+          day: 'Wednesday',
+          icon: 'mdi-white-balance-sunny',
+          temp: '22\xB0/14\xB0',
+        },
+        { day: 'Thursday', icon: 'mdi-cloud', temp: '25\xB0/15\xB0' },
+      ],
+    }
+  },
+  methods: {
+    getLocation() {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          console.log(position.coords.latitude)
+          console.log(position.coords.longitude)
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
     },
+  },
 }
 </script>
